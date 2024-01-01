@@ -13,15 +13,23 @@ import com.example.furniture_app.screens.loginscreens.LoginDetailsScreen
 import com.example.furniture_app.screens.loginscreens.LoginScreen
 import com.example.furniture_app.screens.loginscreens.RegisterScreen
 import com.example.furniture_app.screens.loginscreens.StartScreen
-
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 @Composable
-fun AppNavigationGraph() {
+fun AppNavigationGraph(
+    firebaseAuth: FirebaseAuth
+) {
 
+    val currentuser = Firebase.auth.currentUser
     val navController = rememberNavController()
-    
-    NavHost(navController = navController, startDestination = "Start_Screen" ){
+    var startdesti ="Start_Screen"
+    if(currentuser !=null){
+        startdesti = "Main_App"
+    }
+    NavHost(navController = navController, startDestination = startdesti ){
         composable("Start_Screen"){
             StartScreen(navController)
         }
@@ -35,6 +43,7 @@ fun AppNavigationGraph() {
             RegisterScreen(navController)
         }
         composable("Main_App"){
+
             BottomNavGraph()
 
         }

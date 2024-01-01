@@ -1,5 +1,6 @@
 package com.example.furniture_app.navigation
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHost
@@ -13,6 +14,7 @@ import com.example.furniture_app.screens.appscreens.SearchScreen
 import com.example.furniture_app.screens.appscreens.ShoppingCartScreen
 import com.example.furniture_app.viewmodels.MainCategoryViewModel
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun HomeNavGraph(navcontroller:NavHostController){
     val viewmodel:MainCategoryViewModel = hiltViewModel()
@@ -24,8 +26,9 @@ fun HomeNavGraph(navcontroller:NavHostController){
             SearchScreen()
         }
         composable("Shopping_Cart_Screen"){
-            ShoppingCartScreen()
+            ShoppingCartScreen(navcontroller,viewmodel)
         }
+
         composable("Profile_Screen"){
             ProfileScreen()
         }

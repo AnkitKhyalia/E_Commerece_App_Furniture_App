@@ -31,10 +31,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.furniture_app.R
+import com.example.furniture_app.viewmodels.LoginViewModel
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -76,13 +78,14 @@ fun LoginScreen(navController: NavHostController) {
             )
             Spacer(modifier = Modifier.height(40.dp))
             Button(onClick = {
-                navController.navigate("Main_App"){
-                    popUpTo("Login_Screen"){
-                        inclusive=true}
-                launchSingleTop=true
-                restoreState=true
-
-                }
+                navController.navigate("Register_Screen")
+//                {
+//                    popUpTo("Login_Screen"){
+//                        inclusive=true}
+//                launchSingleTop=true
+//                restoreState=true
+//
+//                }
                              },
                 shape = RoundedCornerShape(15.dp),
                 modifier = Modifier.size(150.dp,50.dp)

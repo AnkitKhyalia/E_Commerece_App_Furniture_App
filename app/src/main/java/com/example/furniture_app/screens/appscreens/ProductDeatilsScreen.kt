@@ -20,9 +20,25 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +54,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.furniture_app.R
+import com.example.furniture_app.data.CartProduct
 import com.example.furniture_app.data.Product
 import com.example.furniture_app.viewmodels.MainCategoryViewModel
 
@@ -49,26 +66,10 @@ fun ProductDetailsScreen(type:String,
 
 ) {
 
-    val product :Product?
-    if (
-        type == "Main"
+    var product :Product?
 
-    ){
-        product = mainCategoryViewModel.allproducts.value.data?.get(index.toInt())
-
-    }
-    else{
-        product = mainCategoryViewModel.productsByCategory.value.data?.get(index.toInt())
-
-
-    }
-    if(product !=null){
-        ProductComposable(product = product)
-
-    }
-    else{
-        Text(text = "No data Available")
-    }
+    product = mainCategoryViewModel.currentdisplayproduct.value
+    ProductComposable(product = product,mainCategoryViewModel)
     
 
 }
@@ -76,17 +77,20 @@ fun ProductDetailsScreen(type:String,
 @Composable
 fun ProductComposable(
     
-    product: Product
+    product: Product,
+    mainCategoryViewModel: MainCategoryViewModel
 ){
+    var isfav by remember { mutableStateOf(false) }
+    var quantity by remember {
+        mutableStateOf(1)
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier
             .fillMaxWidth()
 //            .padding(10.dp)
         ) {
-
             val listState = rememberLazyListState()
-
-            LazyRow(state = listState) {
+            LazyRow(state = listState, modifier = Modifier.fillMaxWidth()) {
             items(product.images.size) { index ->
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -97,9 +101,12 @@ fun ProductComposable(
                     contentDescription = "",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .fillMaxWidth(0.9f)
+//                        .fillMaxWidth(0.2f)
+                        .height(250.dp)
+                        .width(250.dp)
                         .padding(5.dp)
                         .clip(RoundedCornerShape(20.dp))
+//                        .fillMaxWidth()
 
                 )
 
@@ -124,14 +131,59 @@ fun ProductComposable(
             Spacer(modifier = Modifier.height(5.dp))
             Text(text = product.description)
             Spacer(modifier = Modifier.height(10.dp))
-            Button(onClick = { /*TODO*/ },
-                modifier = Modifier.fillMaxWidth()) {
-                Text(text = "Add to Bag")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
 
+                Text(text = "Quantity :")
+                Spacer(modifier = Modifier.width(10.dp))
+
+                IconButton(onClick = { quantity = 1 }) {
+                    Icon(imageVector = Icons.Default.Close, contentDescription ="")
+
+                }
+
+                Card(
+                    shape = RoundedCornerShape(2.dp),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 3.dp
+                    )
+
+                ) {
+                    Text(text = quantity.toString())
+                }
+
+                IconButton(onClick = { quantity ++ }) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription ="")
+
+                }
             }
-
         }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Button(onClick = {mainCategoryViewModel.addUpdateProductInCart(CartProduct(product, quantity =quantity )) },
+                modifier = Modifier.fillMaxWidth(0.6f)) {
 
+                Icon(imageVector = Icons.Default.ShoppingCart,  contentDescription ="" )
+                Text(text = "Add to Cart")
+            }
+            Spacer(modifier = Modifier.width(5.dp))
+            Button(onClick = { /*TODO*/
+                                 isfav = !isfav},
+                modifier = Modifier.fillMaxWidth()
+                    ) {
+                Icon(
+                    imageVector = if (isfav) {
+                                        Icons.Filled.Favorite
+                    }else{Icons.Outlined.FavoriteBorder}, contentDescription = ""
+                )
+            }
+        }
     }
 
 }
@@ -156,7 +208,7 @@ fun DotsIndicator(
             if (index == selectedIndex) {
                 Box(
                     modifier = Modifier
-                        .size(10.dp)
+                        .size(7.dp)
                         .clip(CircleShape)
                         .background(selectedColor)
                 )

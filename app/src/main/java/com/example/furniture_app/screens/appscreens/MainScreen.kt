@@ -215,20 +215,16 @@ fun ProductsList(products: List<Product>?,
 //            }
 //        }
 //    }
-    var x by remember{mutableStateOf("1")}
+//    var x by remember{mutableStateOf("1")}
     LazyColumn(
-
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-
 //        state = listState,
     ) {
 
         if (products != null) {
             items(count = products.size+1,
                 key = {
-
-
                     UUID.randomUUID()
 //                    products[it].id
                 },
@@ -248,7 +244,9 @@ fun ProductsList(products: List<Product>?,
                             }
                             else{
                                 type
-                            }
+                            },
+                            mainCategoryViewModel,
+                            product
 
                         )
                         Spacer(modifier = Modifier.height(5.dp))
@@ -263,12 +261,8 @@ fun ProductsList(products: List<Product>?,
                         ) {
                             Text("Load More")
                         }
-
                     }
-
                 }
-
-
             )
 
 
@@ -289,10 +283,14 @@ fun EachProduct(
     Image:String?,
     navController: NavController,
     index:Int,
-    type:String
+    type:String,
+    mainCategoryViewModel: MainCategoryViewModel,
+    product: Product
 ){
 
-    Card(onClick = {navController.navigate("Product_Details_Screen/$type/$index")}, modifier = Modifier
+    Card(onClick = {
+        mainCategoryViewModel.currentdisplayproduct.value = product
+        navController.navigate("Product_Details_Screen/$type/$index")}, modifier = Modifier
         .fillMaxWidth()
         .padding(5.dp)) {
         Row (modifier = Modifier.fillMaxWidth()){

@@ -4,6 +4,7 @@ package com.example.furniture_app.screens.loginscreens
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -101,7 +102,7 @@ fun RegisterScreen(
 
 
 
-                modifier = Modifier.padding(25.dp,0.dp),
+                modifier = Modifier.padding(25.dp,0.dp).clickable { navController.navigate("Login_Screen") },
                 textAlign = TextAlign.Left,
                 style = TextStyle(color = Color.Gray)
             )
@@ -196,8 +197,13 @@ fun RegisterScreen(
                 is Resource.Success -> {
 //                    Toast. makeText(context, "This a simple toast tutorial!", Toast. LENGTH_LONG). show() })
                     Toast.makeText(context,"User added successfully",Toast.LENGTH_SHORT).show()
+
                     Log.d("registercheck","is in success state")
-                    navController.navigate("Login_Screen")
+                    navController.navigate("Login_Screen"){
+                        popUpTo("Register_Screen"){
+                            inclusive= true
+                        }
+                    }
                 }
                 is Resource.Error ->{
                     Log.d("registercheck",result.message.toString())

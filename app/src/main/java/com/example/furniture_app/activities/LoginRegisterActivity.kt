@@ -15,17 +15,20 @@ import com.example.furniture_app.navigation.AppNavigationGraph
 import com.example.furniture_app.screens.appscreens.AddProductScreen
 import com.example.furniture_app.screens.appscreens.HomeScreen
 import com.example.furniture_app.ui.theme.Furniture_AppTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginRegisterActivity : ComponentActivity() {
-
+    private val auth: FirebaseAuth = Firebase.auth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             Furniture_AppTheme {
                 // A surface container using the 'background' color from the theme
-                AppNavigationGraph()
+                AppNavigationGraph(auth)
 
 //                AddProductScreen()
 //                HomeScreen()

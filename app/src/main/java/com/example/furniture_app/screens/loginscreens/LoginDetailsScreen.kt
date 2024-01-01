@@ -1,5 +1,6 @@
 package com.example.furniture_app.screens.loginscreens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,19 +35,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.furniture_app.R
+import com.example.furniture_app.util.Resource
+import com.example.furniture_app.viewmodels.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginDetailsScreen(navController: NavHostController) {
+fun LoginDetailsScreen(navController: NavHostController,
+                       loginViewModel: LoginViewModel = hiltViewModel()) {
     var email by remember {
         mutableStateOf("")
     }
     var password by remember {
         mutableStateOf("")
     }
+    var error by remember {
+        mutableStateOf(false)
+    }
+    var message by remember {
+        mutableStateOf("")
+    }
+
+
     Box(modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center){
         Image(painter = painterResource(id = R.drawable.blury_background),
@@ -85,7 +99,7 @@ fun LoginDetailsScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            Button(onClick = { /*TODO*/ },
+            Button(onClick = { loginViewModel.login(email,password) },
                 shape = RoundedCornerShape(5.dp),
                 modifier = Modifier.fillMaxWidth(0.73f)
 
@@ -104,7 +118,7 @@ fun LoginDetailsScreen(navController: NavHostController) {
                     Text(text = "Facebook")
                 }
 
-                Button(onClick = { /*TODO*/ },
+                Button(onClick = {  },
                     shape= RoundedCornerShape(5.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor=Color.Gray,
@@ -113,8 +127,36 @@ fun LoginDetailsScreen(navController: NavHostController) {
                     Text(text = "Google")
                 }
             }
+            if(error){
+                Text(text = message)
+            }
 
             Spacer(modifier = Modifier.height(100.dp))
+            LaunchedEffect(loginViewModel){
+                loginViewModel.login.collect(){result->
+                    when(result){
+                        is Resource.Loading ->{
+                            Log.d("inside login details screen","Loading state")
+                        }
+                        is Resource.Success -> {
+                            navController.navigate("Main_App"){
+                                popUpTo("Login_Scren"){
+                                    inclusive = true
+                                }
+                            }
+
+                        }
+                        is Resource.Error ->{
+                            error= true
+                            message = result.message.toString()
+                        }
+
+                    }
+
+
+
+                }
+            }
         }
 
     }
