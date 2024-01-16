@@ -1,16 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  Image Gallery
+</head>
+<body>
 
+<table>
+  <tr>
+    <td>Image 1</td>
+    <td>Image 2</td>
+    <td>Image 3</td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="screenshots/1.jpg" alt="Image 1" style="width: 200px; height: 450px;"></td>
+    <td valign="top"><img src="screenshots/2.jpg" alt="Image 2" style="width: 200px; height: 450px;"></td>
+    <td valign="top"><img src="screenshots/3.jpg" alt="Image 3" style="width: 200px; height: 450px;"></td>
+  </tr>
+  <tr>
+    <td>Image 4</td>
+    <td>Image 5</td>
+    <td>Image 6</td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="screenshots/4.jpg" alt="Image 4" style="width: 200px; height: 450px;"></td>
+    <td valign="top"><img src="screenshots/5.jpg" alt="Image 5" style="width: 200px; height: 450px;"></td>
+    <td valign="top"><img src="screenshots/6.jpg" alt="Image 6" style="width: 200px; height: 450px;"></td>
+  </tr>
+  <tr>
+    <td>Image 7</td>
+    <td>Image 8</td>
+    <td>Image 9</td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="screenshots/7.jpg" alt="Image 7" style="width: 250px; height: 450px;"></td>
+    <td valign="top"><img src="screenshots/8.jpg" alt="Image 8" style="width: 250px; height: 450px;"></td>
+    <td valign="top"><img src="screenshots/9.jpg" alt="Image 9" style="width: 250px; height: 450px;"></td>
+  </tr>
+  <tr>
+    <td>Image 10</td>
+    <td>Image 11</td>
+    <td>Image 12</td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="screenshots/10.jpg" alt="Image 10" style="width: 250px; height: 450px;"></td>
+    <td valign="top"><img src="screenshots/11.jpg" alt="Image 11" style="width: 250px; height: 450px;"></td>
+    <td valign="top"><img src="screenshots/12.jpg" alt="Image 12" style="width: 250px; height: 450px;"></td>
+  </tr>
+  <tr>
+    <td>Image 13</td>
+    <td>Image 14</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="screenshots/13.jpg" alt="Image 13" style="width: 250px; height: 450px;"></td>
+    <td valign="top"><img src="screenshots/14.jpg" alt="Image 14" style="width: 250px; height: 450px;"></td>
+    <td></td>
+  </tr>
+</table>
 
-
-
-<p float="left">
-  <img src="![IMG-20240116-WA0134](https://github.com/AnkitKhyalia/E_Commerece_App_Furniture_App/assets/94122990/151d3ac4-ef35-42d2-9c11-d3413e7e269f) " width="33%" />
-  <img src="![IMG-20240116-WA0135](https://github.com/AnkitKhyalia/E_Commerece_App_Furniture_App/assets/94122990/1d036f08-ab2b-4859-bea3-0537ea9c8233) " width="33%" />
-  <img src="![IMG-20240116-WA0136](https://github.com/AnkitKhyalia/E_Commerece_App_Furniture_App/assets/94122990/37bdf838-99e7-4e9f-8b1a-dfb67eb85aad)" width="33%" />
-</p
-
-
-
-
-
-
-
+</body>
+</html>
