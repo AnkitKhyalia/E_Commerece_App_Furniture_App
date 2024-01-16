@@ -3,25 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Gallery</title>
-  <style>
-    /* Style for centering the content */
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-  </style>
+  Image Gallery
 </head>
 <body>
 
-<!-- Video tag for the first cell -->
-<video width="400" height="300" controls>
-  <source src="screenshots/video.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
 
 <table>
   <tr>
