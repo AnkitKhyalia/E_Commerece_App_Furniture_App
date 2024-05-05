@@ -1,10 +1,8 @@
-package com.example.furniture_app.viewmodels
+package com.example.furniture_app.viewmodels.mainapp
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.furniture_app.R
 import com.example.furniture_app.data.CartProduct
 import com.example.furniture_app.firebase.FirebaseCommon
 import com.example.furniture_app.util.Resource
@@ -58,19 +56,6 @@ class CartViewModel @Inject constructor(
 
                 }
             }
-//            .addOnSuccessListener {result->
-//                val allcartproductslist =   result.toObjects(CartProduct::class.java)
-//                viewModelScope.launch{
-//                    _allCartProducts.emit(Resource.Success(allcartproductslist))
-//                    gettoalprice(allcartproductslist)
-//                    cartProductDocument = result.documents
-//                }
-//            }.addOnFailureListener {
-//                viewModelScope.launch {
-//                    _allCartProducts.emit(Resource.Error(it.message.toString()))
-//                }
-//            }
-
     }
     fun gettoalprice(allcartprodcuts:List<CartProduct>?){
         if (allcartprodcuts != null) {

@@ -1,11 +1,12 @@
 package com.example.furniture_app.screens.appscreens
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,8 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -24,17 +23,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,36 +47,64 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.furniture_app.R
 import com.example.furniture_app.data.CartProduct
 import com.example.furniture_app.data.Product
-import com.example.furniture_app.viewmodels.MainCategoryViewModel
+import com.example.furniture_app.util.Header
+import com.example.furniture_app.util.Resource
+import com.example.furniture_app.viewmodels.mainapp.MainCategoryViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun ProductDetailsScreen(type:String,
-                         index: String,
-                         mainCategoryViewModel:MainCategoryViewModel = hiltViewModel()
+fun ProductDetailsScreen(
+    navController: NavController,
+    mainCategoryViewModel: MainCategoryViewModel = hiltViewModel()
 
 ) {
 
     var product :Product?
-
+    val addtocart = mainCategoryViewModel.addToCart.collectAsState().value
+   val context = LocalContext.current
     product = mainCategoryViewModel.currentdisplayproduct.value
-    ProductComposable(product = product,mainCategoryViewModel)
+    ProductComposable(navController,product = product,mainCategoryViewModel)
     
+    when(addtocart){
+        is Resource.Error -> {
+            LaunchedEffect(key1 = Unit) {
+                Toast.makeText(
+                    context,
+                    addtocart.message.toString(),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        is Resource.Loading -> {
+            CircularProgressIndicator(modifier = Modifier.size(60.dp))
+        }
+        is Resource.Success -> {
+            LaunchedEffect(key1 = Unit) {
+                Toast.makeText(
+                    context,
+                    "Item Added Successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        is Resource.Unspecified -> {
 
+        }
+    }
 }
 
 @Composable
 fun ProductComposable(
-    
+    navController:NavController,
     product: Product,
     mainCategoryViewModel: MainCategoryViewModel
 ){
@@ -87,8 +115,9 @@ fun ProductComposable(
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier
             .fillMaxWidth()
-//            .padding(10.dp)
+            .padding(10.dp)
         ) {
+            Header(onClick = {navController.popBackStack()}, heading ="Product Information" )
             val listState = rememberLazyListState()
             LazyRow(state = listState, modifier = Modifier.fillMaxWidth()) {
             items(product.images.size) { index ->
@@ -112,7 +141,7 @@ fun ProductComposable(
 
                 }
             }
-            DotsIndicator(totalDots = product.images.size, selectedIndex =listState.firstVisibleItemIndex, selectedColor = Color.Red , unSelectedColor = Color.Gray)
+//            DotsIndicator(totalDots = product.images.size, selectedIndex =listState.firstVisibleItemIndex, selectedColor = Color.Red , unSelectedColor = Color.Gray)
             Spacer(modifier = Modifier.height(10.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
                 Text(text = product.name)
@@ -133,28 +162,37 @@ fun ProductComposable(
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
 
                 Text(text = "Quantity :")
+
                 Spacer(modifier = Modifier.width(10.dp))
 
-                IconButton(onClick = { quantity = 1 }) {
+                Button(onClick = { quantity =1 },
+                    modifier = Modifier.size(30.dp), contentPadding = PaddingValues(5.dp)
+                ) {
                     Icon(imageVector = Icons.Default.Close, contentDescription ="")
 
                 }
+                Spacer(modifier = Modifier.width(10.dp))
 
                 Card(
                     shape = RoundedCornerShape(2.dp),
                     elevation = CardDefaults.cardElevation(
-                        defaultElevation = 3.dp
-                    )
+                        defaultElevation = 3.dp,
+
+                    ),
+                    modifier = Modifier.size(30.dp),
 
                 ) {
-                    Text(text = quantity.toString())
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(text = quantity.toString())
+                    }
                 }
-
-                IconButton(onClick = { quantity ++ }) {
+                Spacer(modifier = Modifier.width(10.dp))
+                Button(onClick = { quantity ++ }, modifier = Modifier.size(30.dp), contentPadding = PaddingValues(5.dp)) {
                     Icon(imageVector = Icons.Default.Add, contentDescription ="")
 
                 }
@@ -173,7 +211,7 @@ fun ProductComposable(
                 Text(text = "Add to Cart")
             }
             Spacer(modifier = Modifier.width(5.dp))
-            Button(onClick = { /*TODO*/
+            Button(onClick = {
                                  isfav = !isfav},
                 modifier = Modifier.fillMaxWidth()
                     ) {

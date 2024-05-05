@@ -1,3 +1,4 @@
+import com.android.build.gradle.ProguardFiles.getDefaultProguardFile
 import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 
 plugins {
@@ -8,6 +9,7 @@ plugins {
     id("kotlin-kapt")
 //    kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id ("kotlin-parcelize")
 }
 
 android {
@@ -54,6 +56,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
@@ -71,6 +74,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.firebase:firebase-auth:22.3.0")
     implementation("com.google.firebase:firebase-firestore:24.10.0")
+    implementation("androidx.core:core-ktx:+")
+    implementation("androidx.core:core-ktx:+")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -78,12 +83,18 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    //
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.6")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation ("androidx.navigation:navigation-fragment:2.7.6")
+    implementation ("androidx.navigation:navigation-ui:2.7.6")
 
     //hilt
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
 //navigation
     implementation("androidx.navigation:navigation-compose:2.7.6")
+
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     // corutines

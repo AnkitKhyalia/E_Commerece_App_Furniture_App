@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -25,12 +24,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,28 +41,28 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.furniture_app.R
 import com.example.furniture_app.data.CartProduct
 import com.example.furniture_app.firebase.FirebaseCommon
+import com.example.furniture_app.util.Header
 import com.example.furniture_app.util.Resource
-import com.example.furniture_app.viewmodels.CartViewModel
-import com.example.furniture_app.viewmodels.MainCategoryViewModel
-import kotlinx.coroutines.flow.asStateFlow
+import com.example.furniture_app.viewmodels.mainapp.CartViewModel
+import com.example.furniture_app.viewmodels.mainapp.MainCategoryViewModel
 import java.util.UUID
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ShoppingCartScreen(
-    navController: NavHostController,
+    navController: NavController,
     mainCategoryViewModel: MainCategoryViewModel,
     cartViewModel: CartViewModel = hiltViewModel()
 ){
@@ -75,10 +71,13 @@ fun ShoppingCartScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         Box(modifier = Modifier.fillMaxSize()){
-            Column(modifier = Modifier.fillMaxWidth()){
 
+            Column(modifier = Modifier.fillMaxWidth()){
+                Header(onClick = {navController.popBackStack()}, heading ="Your Cart" )
                 if (allcartproductslist.value is Resource.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.fillMaxSize().padding(40.dp))
+                    CircularProgressIndicator(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(40.dp))
                 } else if (allcartproductslist.value is Resource.Success) {
                     val productlist = (allcartproductslist.value as Resource.Success).data
                     ProductList(products = productlist,navController,mainCategoryViewModel,cartViewModel.totalprice.value.toString(),cartViewModel)
@@ -100,41 +99,58 @@ fun ProductList(
     totalprice:String,
     cartViewModel: CartViewModel
 ){  
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxSize()) {
 
-
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxSize(0.8f)){
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+//            modifier = Modifier.weight(1f)
 //        state = listState,
-        ) {
+            ) {
 
-            if (products != null) {
-                items(count = products.size,
-                    key = {
-//                    UUID.randomUUID()
-                        products[it].product.id
-                    },
-                    itemContent = { index ->
-                        val product = products[index]
-                        EachProduct(
-                            products[index],
-                            navController = navController,
-                            index = index,
-                            type = "x",
-                            mainCategoryViewModel = mainCategoryViewModel,
-                            cartViewModel = cartViewModel
-                        )
-                        Spacer(modifier = Modifier.height(5.dp))
+                if (!products.isNullOrEmpty()) {
+                    items(count = products.size,
+                        key = {
+                            UUID.randomUUID()
+//                        products[it].product.id
+                        },
+                        itemContent = { index ->
+                            val product = products[index]
+                            EachProduct(
+                                products[index],
+                                navController = navController,
+                                index = index,
+                                type = "x",
+                                mainCategoryViewModel = mainCategoryViewModel,
+                                cartViewModel = cartViewModel
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                        }
+                    )
+                }
+                else{
+                    items(1){
+                        Text(text = "No items in the Cart")
                     }
-                )
+
+                }
             }
         }
-        Column(modifier = Modifier.fillMaxWidth()) {
 
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)) {
 
-            Text(text = "total amount: $totalprice")
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(text = "Total amount: Rs.$totalprice", modifier = Modifier.padding(10.dp), fontWeight = FontWeight.Bold)
+            Button(onClick = {
+                if(products!=null && products.isNotEmpty()) {
+                    navController.navigate("Checkout_Navigation_Graph")
+                }
+                             }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Proceed to Checkout")
 
             }
@@ -162,7 +178,7 @@ fun EachProduct(
     val context = LocalContext.current
     Card(onClick = {
         mainCategoryViewModel.currentdisplayproduct.value = cartProduct.product
-        navController.navigate("Product_Details_Screen/$type/$index")}, modifier = Modifier
+        navController.navigate("Product_Navigation_Graph")}, modifier = Modifier
         .fillMaxWidth()
         .padding(5.dp)) {
         Row (modifier = Modifier.fillMaxSize(),

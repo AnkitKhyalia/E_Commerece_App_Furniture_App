@@ -41,9 +41,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.fragment.NavHostFragment
+import com.example.furniture_app.navigation.AppNavigationGraph
 import com.example.furniture_app.navigation.HomeNavGraph
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
+import org.w3c.dom.Text
 
 
 sealed class BottomNavigationItem(
@@ -87,57 +90,72 @@ val items = listOf(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNavGraph(){
+fun BottomNavGraph(auth: FirebaseAuth){
+
     val navController = rememberNavController()
+    var showBottomBar by rememberSaveable { mutableStateOf(true) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+    showBottomBar = when (navBackStackEntry?.destination?.route) {
+        "Home_Screen" -> true // on this screen bottom bar should be hidden
+        "Search_Screen" -> true // here too
+        "Shopping_Cart_Screen"->true
+        "Profile_Screen"->true
+        else -> false // in all other cases show bottom bar
+    }
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                val backStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = backStackEntry?.destination
-                items.forEachIndexed{index, bottomNavigationItem ->
-                    val isSelected = currentDestination?.route == bottomNavigationItem.route
-                    NavigationBarItem(
-                        selected =isSelected ,
-                        onClick = {
-                            if(!isSelected) {
+            if (showBottomBar){
+                NavigationBar {
+                    val backStackEntry by navController.currentBackStackEntryAsState()
+                    val currentDestination = backStackEntry?.destination
+                    items.forEachIndexed { index, bottomNavigationItem ->
+                        val isSelected = currentDestination?.route == bottomNavigationItem.route
+                        NavigationBarItem(
+                            selected = isSelected,
+                            onClick = {
+                                if (!isSelected) {
 
-                                navController.navigate(bottomNavigationItem.route)
-                                {
-//                                popUpTo(navController.graph.findStartDestination().id)
-                                    popUpTo("Home_Screen")
+                                    navController.navigate(bottomNavigationItem.route)
                                     {
-                                        saveState = true
+//                                popUpTo(navController.graph.findStartDestination().id)
+                                        popUpTo("Home_Screen")
+                                        {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
                                 }
+
+                            },
+                            label = {
+                                Text(text = bottomNavigationItem.title)
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = if (isSelected) {
+                                        bottomNavigationItem.selectedIcon
+                                    } else {
+                                        bottomNavigationItem.unselectedIcon
+                                    },
+                                    contentDescription = bottomNavigationItem.title
+                                )
+
                             }
+                        )
+                    }
 
-                        },
-                        label = {
-                            Text(text = bottomNavigationItem.title)
-                        },
-                        icon = {
-                            Icon(
-                                imageVector= if(isSelected){
-                                    bottomNavigationItem.selectedIcon
-                                }else{
-                                    bottomNavigationItem.unselectedIcon
-                                     },
-                                contentDescription =bottomNavigationItem.title
-                            )
-
-                        }
-                    )
                 }
+        }
 
-            }
         }
     ) {innerpadding->
         Box(modifier = Modifier.padding(innerpadding)) {
 
-            HomeNavGraph(navcontroller = navController)
+//            HomeNavGraph(navcontroller = navController)
+            AppNavigationGraph(firebaseAuth =auth,navController )
         }
     }
 }

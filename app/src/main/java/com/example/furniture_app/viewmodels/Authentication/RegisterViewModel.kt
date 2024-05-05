@@ -1,4 +1,4 @@
-package com.example.furniture_app.viewmodels
+package com.example.furniture_app.viewmodels.Authentication
 
 import androidx.lifecycle.ViewModel
 import com.example.furniture_app.data.User
@@ -10,7 +10,6 @@ import com.example.furniture_app.util.validateEmail
 import com.example.furniture_app.util.validateFirstName
 import com.example.furniture_app.util.validatePassword
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.furniture_app.navigation.AppNavigationGraph
 import com.example.furniture_app.screens.appscreens.AddProductScreen
+import com.example.furniture_app.screens.appscreens.BottomNavGraph
 import com.example.furniture_app.screens.appscreens.HomeScreen
 import com.example.furniture_app.ui.theme.Furniture_AppTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -28,7 +29,8 @@ class LoginRegisterActivity : ComponentActivity() {
         setContent {
             Furniture_AppTheme {
                 // A surface container using the 'background' color from the theme
-                AppNavigationGraph(auth)
+//                AppNavigationGraph(auth)
+                BottomNavGraph(auth = auth)
 
 //                AddProductScreen()
 //                HomeScreen()

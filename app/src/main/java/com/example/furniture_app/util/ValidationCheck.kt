@@ -36,3 +36,9 @@ fun validateProduct(input:String):ProductListingValidation{
     }
     return ProductListingValidation.Success
 }
+fun validateAddress(input:String):AddressValidation{
+    if(input.isEmpty()){
+        return AddressValidation.Failed("First Name can not be empty")
+    }
+    return AddressValidation.Success
+}

@@ -1,11 +1,9 @@
-package com.example.furniture_app.viewmodels
+package com.example.furniture_app.viewmodels.mainapp
 
 import android.util.Log
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.furniture_app.data.CartProduct
 import com.example.furniture_app.data.Product
 import com.example.furniture_app.firebase.FirebaseCommon
@@ -13,10 +11,8 @@ import com.example.furniture_app.util.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
-import com.google.firebase.firestore.toObjects
+import com.google.protobuf.Empty
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,8 +37,9 @@ class MainCategoryViewModel @Inject constructor(
 //    val listState = rememberLazyListState(0,0)
     var lastVisible: DocumentSnapshot? = null
 
-    private  val _addToCart = MutableStateFlow<Resource<CartProduct>>(Resource.Loading())
+    private  val _addToCart = MutableStateFlow<Resource<CartProduct>>(Resource.Unspecified())
     val addToCart = _addToCart.asStateFlow()
+     val noMoreProducts = MutableStateFlow(false)
     init {
         getallproducts()
     }
@@ -73,7 +70,7 @@ class MainCategoryViewModel @Inject constructor(
             .get()
             .addOnSuccessListener { result->
                 val allProductList = result.toObjects(Product::class.java)
-                Log.d("products", allProductList[0].name)
+//                Log.d("products", allProductList[0].name)
 
                 viewModelScope.launch {
                     _productsByCategory.emit(Resource.Success(allProductList))
@@ -96,11 +93,20 @@ class MainCategoryViewModel @Inject constructor(
             loading.value = true
             lastVisible?.let {
                 db.collection("Products").startAfter(it).get().addOnSuccessListener { result ->
+
                     for (document in result.documents) {
                         Log.d("ProductData", "Document: $document")
                     }
+                    if(result.isEmpty){
+                        viewModelScope.launch {
+                            viewModelScope.launch {
+                                Log.d("maing category viewmodel", "Inside result empty condition check")
+                                noMoreProducts.emit(true)
+                            }
+                        }
+                    }
                     val newProductList = result.toObjects(Product::class.java)
-                    Log.d("products", newProductList[0].name)
+//                    Log.d("products", newProductList[0].name)
                     lastVisible = result.documents.lastOrNull()
 
                     viewModelScope.launch {
@@ -124,8 +130,16 @@ class MainCategoryViewModel @Inject constructor(
                     for (document in result.documents) {
                         Log.d("ProductData", "Document: $document")
                     }
+                    if(result.isEmpty){
+                        viewModelScope.launch {
+                            viewModelScope.launch {
+                                Log.d("maing category viewmodel", "Inside result empty condition check")
+                                noMoreProducts.emit(true)
+                            }
+                        }
+                    }
                     val newProductList = result.toObjects(Product::class.java)
-                    Log.d("products", newProductList[0].name)
+//                    Log.d("products", newProductList[0].name)
                     lastVisible = result.documents.lastOrNull()
 
                     viewModelScope.launch {

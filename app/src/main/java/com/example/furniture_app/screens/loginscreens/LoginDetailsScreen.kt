@@ -40,7 +40,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.furniture_app.R
 import com.example.furniture_app.util.Resource
-import com.example.furniture_app.viewmodels.LoginViewModel
+import com.example.furniture_app.viewmodels.Authentication.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,7 +128,7 @@ fun LoginDetailsScreen(navController: NavHostController,
                 }
             }
             if(error){
-                Text(text = message)
+                Text(text = message, modifier = Modifier.padding(20.dp))
             }
 
             Spacer(modifier = Modifier.height(100.dp))
@@ -140,7 +140,7 @@ fun LoginDetailsScreen(navController: NavHostController,
                         }
                         is Resource.Success -> {
                             navController.navigate("Main_App"){
-                                popUpTo("Login_Scren"){
+                                popUpTo("Login_Screen"){
                                     inclusive = true
                                 }
                             }
@@ -149,6 +149,9 @@ fun LoginDetailsScreen(navController: NavHostController,
                         is Resource.Error ->{
                             error= true
                             message = result.message.toString()
+                        }
+                        else -> {
+
                         }
 
                     }

@@ -1,6 +1,7 @@
 package com.example.furniture_app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -20,11 +21,12 @@ import com.google.firebase.ktx.Firebase
 
 @Composable
 fun AppNavigationGraph(
-    firebaseAuth: FirebaseAuth
+    firebaseAuth: FirebaseAuth,
+    navController: NavHostController
 ) {
 
     val currentuser = Firebase.auth.currentUser
-    val navController = rememberNavController()
+//    val navController = rememberNavController()
     var startdesti ="Start_Screen"
     if(currentuser !=null){
         startdesti = "Main_App"
@@ -42,14 +44,16 @@ fun AppNavigationGraph(
         composable("Register_Screen"){
             RegisterScreen(navController)
         }
-        composable("Main_App"){
-
-            BottomNavGraph()
-
-        }
+//        composable("Main_App"){
+//
+//            BottomNavGraph()
+//
+//        }
+        homeNavGraph(navController)
         composable("Add_Product_Screen"){
             AddProductScreen()
         }
+
     }
 }
 

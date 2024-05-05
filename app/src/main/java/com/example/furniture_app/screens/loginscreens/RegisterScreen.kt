@@ -47,7 +47,7 @@ import com.example.furniture_app.data.User
 import com.example.furniture_app.util.RegisterFieldsState
 import com.example.furniture_app.util.RegisterValidation
 import com.example.furniture_app.util.Resource
-import com.example.furniture_app.viewmodels.RegisterViewModel
+import com.example.furniture_app.viewmodels.Authentication.RegisterViewModel
 
 
 //import kotlin.coroutines.jvm.internal.CompletedContinuation.context
@@ -56,7 +56,7 @@ import com.example.furniture_app.viewmodels.RegisterViewModel
 @Composable
 fun RegisterScreen(
     navController: NavController,
-    registerViewModel: RegisterViewModel= hiltViewModel()
+    registerViewModel: RegisterViewModel = hiltViewModel()
 ) {
   val context = LocalContext.current
 
@@ -143,7 +143,7 @@ fun RegisterScreen(
 
             Button(onClick = {
 
-                registerViewModel.createAccountWithEmailAndPassword(user=User(firstname,lastname,email),password)
+                registerViewModel.createAccountWithEmailAndPassword(user=User(firstname,lastname,email,""),password)
 //                navController.navigate("Login_Screen")
 //                {
 //                    popUpTo("Register_Screen") {

@@ -75,24 +75,6 @@ class SaveProductViewmodel @Inject constructor(
         val storageRef = Firebase.storage.reference
         val uploadedImageUrls = mutableListOf<String>()
         product.id = "${product.name}_${System.currentTimeMillis()}"
-//        for (imageUri in images) {
-//
-//            val fileName = "${product.Name}_${System.currentTimeMillis()}"
-//            val imageRef = storageRef.child("products/images/$fileName")
-////            val imageRef = storageRef.child("products/images/${product.Name}_${System.currentTimeMillis()}")
-//            val uploadTask = imageRef.putFile(imageUri)
-//            uploadTask.await()
-//            uploadTask.addOnSuccessListener {
-//                // Image upload successful
-//                Log.d("application", "Image uploaded successfully!")
-//            }.addOnFailureListener { e ->
-//                // Image upload failed
-//                Log.d("application", "Image upload failed: $e")
-//            }
-//
-//            val downloadUrl = imageRef.downloadUrl.await()
-//            uploadedImageUrls.add(downloadUrl.toString())
-//        }
         for (imageUri in images) {
             val fileName = "${product.name}_${System.currentTimeMillis()}"
             val imageRef = storageRef.child("products/images/$fileName")

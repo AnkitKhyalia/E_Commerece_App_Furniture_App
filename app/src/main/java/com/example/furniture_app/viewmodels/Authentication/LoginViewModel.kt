@@ -1,4 +1,4 @@
-package com.example.furniture_app.viewmodels
+package com.example.furniture_app.viewmodels.Authentication
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

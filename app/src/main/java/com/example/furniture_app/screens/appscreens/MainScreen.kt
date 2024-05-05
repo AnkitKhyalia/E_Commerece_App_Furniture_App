@@ -1,48 +1,25 @@
 package com.example.furniture_app.screens.appscreens
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,47 +27,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.example.furniture_app.navigation.HomeNavGraph
 import kotlinx.coroutines.launch
 //import androidx.compose.material.TabRowDefaults.*
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter.State.Empty.painter
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.furniture_app.R
 import com.example.furniture_app.data.Product
 import com.example.furniture_app.util.Resource
-import com.example.furniture_app.viewmodels.MainCategoryViewModel
-import com.google.android.play.integrity.internal.x
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
+import com.example.furniture_app.viewmodels.mainapp.MainCategoryViewModel
 import java.util.UUID
 
 
@@ -99,7 +57,7 @@ val tablist:List<String> = listOf("Main","Chair","Table","Bed","Bench")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
-    navController:NavHostController,
+    navController:NavController,
     mainCategoryViewModel: MainCategoryViewModel = hiltViewModel()
 ){
     val coroutineScope = rememberCoroutineScope()
@@ -107,7 +65,7 @@ fun HomeScreen(
 //    val allproducts = mainCategoryViewModel.allproducts.collectAsState(initial = Resource.Loading())
     val allproducts = mainCategoryViewModel.allproducts.collectAsState(initial = Resource.Loading())
     val productsByCategory = mainCategoryViewModel.productsByCategory.collectAsState(initial = Resource.Loading())
-
+    val noMoreProduct = mainCategoryViewModel.noMoreProducts.collectAsState().value
 
     Surface (modifier = Modifier.fillMaxSize()){
         Column(modifier = Modifier.fillMaxWidth()){
@@ -149,7 +107,7 @@ fun HomeScreen(
                     CircularProgressIndicator()
                 } else if (allproducts.value is Resource.Success) {
                     val productlist = (allproducts.value as Resource.Success).data
-                    ProductsList(products = productlist, tablist[selectedTabIndex],navController,"Main", mainCategoryViewModel)
+                    ProductsList(products = productlist, tablist[selectedTabIndex],navController,"Main", mainCategoryViewModel,noMoreProduct)
                 } else if (allproducts.value is Resource.Error) {
                     (allproducts.value as Resource.Error).message?.let { Text(it) }
                 }
@@ -160,7 +118,7 @@ fun HomeScreen(
                     CircularProgressIndicator()
                 } else if (productsByCategory.value is Resource.Success) {
                     val productlist = (productsByCategory.value as Resource.Success).data
-                    ProductsList(products = productlist, tablist[selectedTabIndex], navController,"categories", mainCategoryViewModel)
+                    ProductsList(products = productlist, tablist[selectedTabIndex], navController,"categories", mainCategoryViewModel,noMoreProduct)
                 } else if (productsByCategory.value is Resource.Error) {
                     (productsByCategory.value as Resource.Error).message?.let { Text(it) }
                 }
@@ -177,7 +135,8 @@ fun ProductsList(products: List<Product>?,
                  tabName:String,
                  navController: NavController,
                  type:String,
-                 mainCategoryViewModel: MainCategoryViewModel= hiltViewModel()) {
+                 mainCategoryViewModel: MainCategoryViewModel,
+                 noMoreProducts:Boolean) {
 
     val listState= rememberLazyListState()
 //    LazyColumn(
@@ -252,20 +211,31 @@ fun ProductsList(products: List<Product>?,
                         Spacer(modifier = Modifier.height(5.dp))
                     }
                     else{
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-//                                isLoadingMore = true
-                                mainCategoryViewModel.loadMoreAllProducts(tabName) // Function to fetch more data
-                            }
-                        ) {
-                            Text("Load More")
+                        if(noMoreProducts){
+                            Text(text = "No More Products Are Available")
                         }
+                        else{
+                            Button(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = {
+//                                isLoadingMore = true
+                                    mainCategoryViewModel.loadMoreAllProducts(tabName) // Function to fetch more data
+                                }
+                            ) {
+                                Text("Load More")
+                            }
+                        }
+
                     }
                 }
             )
 
 
+        }
+        else{
+            item {
+                Text(text = "No More Products to Display")
+            }
         }
     }
 
@@ -290,7 +260,11 @@ fun EachProduct(
 
     Card(onClick = {
         mainCategoryViewModel.currentdisplayproduct.value = product
-        navController.navigate("Product_Details_Screen/$type/$index")}, modifier = Modifier
+        navController.navigate("Product_Navigation_Graph")
+//        navController.navigate(route = "Product_Navigation_Graph/Product_Details_Screen")
+
+    }, modifier = Modifier
+
         .fillMaxWidth()
         .padding(5.dp)) {
         Row (modifier = Modifier.fillMaxWidth()){
